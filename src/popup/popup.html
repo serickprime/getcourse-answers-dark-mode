@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GetCourse: тёмная тема ответов</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <h1 class="popup__title">Тёмная тема ответов</h1>
+
+      <label class="popup__row" for="dark-mode-toggle">
+        <span class="popup__label">Тёмная тема</span>
+        <input id="dark-mode-toggle" class="popup__toggle" type="checkbox" />
+      </label>
+
+      <p class="popup__hint" id="status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

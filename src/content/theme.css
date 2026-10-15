@@ -1,0 +1,785 @@
+/* =============================================================================
+ * GetCourse Answers — graphite dark theme
+ * =============================================================================
+ * Activation: EVERY rule in this file is gated by the presence of the attribute
+ *   data-gc-answers-dark="on"
+ * on the <html> element. The content script (src/content/content.js) sets that
+ * attribute only when (a) the runtime pathname check passes and (b) the user's
+ * persisted preference is enabled. Because the gate lives on the document root,
+ * any element inserted later (new comments, answers, dropdowns) inherits the
+ * theme automatically — no per-node processing and no MutationObserver.
+ *
+ * Scope: this file is only ever loaded on the manifest's single approved match
+ * pattern. It does not use `filter`, opacity, inversion, or background images,
+ * and it never targets media (images, video, canvas, svg, iframes) or uploaded
+ * file contents, so screenshots and uploaded files keep their original
+ * appearance. Only the confirmed attachment *container* surface is recoloured
+ * (Task 004); the files and previews inside it are never touched.
+ *
+ * Palette (approved): page #1E1E1E, surfaces #292929.
+ * ========================================================================== */
+
+/* --- Design tokens (defined only while the theme is active) -------------- */
+html[data-gc-answers-dark="on"] {
+  --gc-bg: #1e1e1e;
+  --gc-surface: #292929;
+  --gc-surface-raised: #303030;
+  --gc-surface-sunken: #232323;
+  --gc-text: #e6e6e6;
+  /* Task 002A: raised from #a6a6a6 so secondary/muted text stays comfortably
+   * readable (≈6.9:1 on #292929, ≈5.7:1 on the lightest hover surface #343434)
+   * without competing with primary text (#e6e6e6). */
+  --gc-text-muted: #b4b4b4;
+  --gc-border: #3a3a3a;
+  --gc-border-strong: #4a4a4a;
+  --gc-link: #7ab7ff;
+  --gc-link-hover: #a9d0ff;
+  --gc-accent: #4f8cff;
+  --gc-focus: #4f8cff;
+  --gc-input-bg: #222222;
+  --gc-hover: #343434;
+  --gc-selected: #2b3a4f;
+  /* Task 004: one system sans-serif stack for the whole interface (Segoe UI
+   * first on Windows), similar in feel to a clean chat UI. It is entirely local
+   * — no @font-face and no network request — and only `font-family` is changed,
+   * so every existing font size, weight, and line height is preserved. */
+  --gc-font-sans: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color-scheme: dark;
+}
+
+/* --- Document, page background, and main layout -------------------------- */
+html[data-gc-answers-dark="on"] {
+  background-color: var(--gc-bg);
+}
+html[data-gc-answers-dark="on"] body {
+  background-color: var(--gc-bg);
+  color: var(--gc-text);
+  /* Task 004: the inherited typography base for the whole page. */
+  font-family: var(--gc-font-sans);
+}
+html[data-gc-answers-dark="on"] .main-page-container {
+  background-color: var(--gc-bg);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-main-content {
+  background-color: var(--gc-bg);
+  color: var(--gc-text);
+}
+
+/* --- Left navigation sidebar --------------------------------------------- */
+html[data-gc-answers-dark="on"] .gc-account-leftbar {
+  background-color: var(--gc-surface);
+  color: var(--gc-text);
+  border-right-color: var(--gc-border);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar a {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar a:hover,
+html[data-gc-answers-dark="on"] .gc-account-leftbar a:focus {
+  color: var(--gc-link-hover);
+  background-color: var(--gc-hover);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar .active,
+html[data-gc-answers-dark="on"] .gc-account-leftbar .selected {
+  background-color: var(--gc-selected);
+  color: var(--gc-text);
+}
+
+/* --- Top bar ------------------------------------------------------------- */
+html[data-gc-answers-dark="on"] .navbar {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .navbar a {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .navbar a:hover,
+html[data-gc-answers-dark="on"] .navbar a:focus {
+  color: var(--gc-link-hover);
+}
+
+/* --- Headings, text, and links ------------------------------------------- */
+html[data-gc-answers-dark="on"] h1,
+html[data-gc-answers-dark="on"] h2,
+html[data-gc-answers-dark="on"] h3,
+html[data-gc-answers-dark="on"] h4,
+html[data-gc-answers-dark="on"] h5,
+html[data-gc-answers-dark="on"] h6 {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] a {
+  color: var(--gc-link);
+}
+html[data-gc-answers-dark="on"] a:hover,
+html[data-gc-answers-dark="on"] a:focus {
+  color: var(--gc-link-hover);
+}
+html[data-gc-answers-dark="on"] .text-muted {
+  color: var(--gc-text-muted);
+}
+
+/* --- Answers list and answer cards --------------------------------------- */
+html[data-gc-answers-dark="on"] .answers-list {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .answer_wrapper {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .answer_wrapper:hover {
+  border-color: var(--gc-border-strong);
+}
+html[data-gc-answers-dark="on"] .answer-main-content,
+html[data-gc-answers-dark="on"] .answer-content {
+  background-color: var(--gc-surface);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .answer-text {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .answer-controls {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+/* NOTE: the attachment/file boxes (.answer-files, .answer-file-box) are
+ * intentionally NOT styled here. The approved requirements forbid altering
+ * uploaded files and attachment previews, so those elements keep their original
+ * appearance. */
+
+/* --- Status labels (semantic colours are preserved, only neutrals/theme) -- */
+html[data-gc-answers-dark="on"] .answer-status {
+  color: var(--gc-text-muted);
+}
+html[data-gc-answers-dark="on"] .answer-status-label {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .label-default {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+}
+
+/* --- Comments and comment form ------------------------------------------- */
+html[data-gc-answers-dark="on"] .comment-list {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-comment-form {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .new-comment-textarea {
+  background-color: var(--gc-input-bg);
+  color: var(--gc-text);
+  border-color: var(--gc-border-strong);
+}
+
+/* --- Text inputs, textareas, selects, labels ----------------------------- */
+html[data-gc-answers-dark="on"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="image"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="color"]),
+html[data-gc-answers-dark="on"] textarea,
+html[data-gc-answers-dark="on"] select {
+  background-color: var(--gc-input-bg);
+  color: var(--gc-text);
+  border-color: var(--gc-border-strong);
+}
+html[data-gc-answers-dark="on"] input:focus,
+html[data-gc-answers-dark="on"] textarea:focus,
+html[data-gc-answers-dark="on"] select:focus {
+  border-color: var(--gc-focus);
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.35);
+}
+html[data-gc-answers-dark="on"] input::placeholder,
+html[data-gc-answers-dark="on"] textarea::placeholder {
+  color: var(--gc-text-muted);
+}
+html[data-gc-answers-dark="on"] select option {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] label {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] input[type="checkbox"],
+html[data-gc-answers-dark="on"] input[type="radio"] {
+  accent-color: var(--gc-accent);
+}
+
+/* --- Dropdowns, menus, and filter controls ------------------------------- */
+html[data-gc-answers-dark="on"] .dropdown-menu {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+html[data-gc-answers-dark="on"] .dropdown-menu a,
+html[data-gc-answers-dark="on"] .dropdown-menu > li > a {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .dropdown-menu > li > a:hover,
+html[data-gc-answers-dark="on"] .dropdown-menu > li > a:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .dropdown-menu .divider {
+  background-color: var(--gc-border);
+}
+html[data-gc-answers-dark="on"] .answers-page-filter,
+html[data-gc-answers-dark="on"] .answers-page-filter-toggler {
+  background-color: var(--gc-surface);
+  color: var(--gc-text);
+  border-color: var(--gc-border);
+}
+
+/* --- Prompt panel and answer form ---------------------------------------- */
+html[data-gc-answers-dark="on"] .hw-prompt {
+  background-color: var(--gc-surface);
+  color: var(--gc-text);
+  border-color: var(--gc-border);
+}
+html[data-gc-answers-dark="on"] .lesson-answer-form {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .template-links a {
+  color: var(--gc-link);
+}
+
+/* --- Tables and separators ----------------------------------------------- */
+html[data-gc-answers-dark="on"] table {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .table {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] th,
+html[data-gc-answers-dark="on"] td {
+  border-color: var(--gc-border);
+}
+html[data-gc-answers-dark="on"] .table > thead > tr > th {
+  border-bottom-color: var(--gc-border-strong);
+}
+html[data-gc-answers-dark="on"] .table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+html[data-gc-answers-dark="on"] hr {
+  border-color: var(--gc-border);
+}
+
+/* --- Pagination ---------------------------------------------------------- */
+html[data-gc-answers-dark="on"] .pagination > li > a,
+html[data-gc-answers-dark="on"] .pagination > li > span {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-link);
+}
+html[data-gc-answers-dark="on"] .pagination > li > a:hover,
+html[data-gc-answers-dark="on"] .pagination > li > a:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-link-hover);
+}
+html[data-gc-answers-dark="on"] .pagination > .active > a,
+html[data-gc-answers-dark="on"] .pagination > .active > span {
+  background-color: var(--gc-accent);
+  border-color: var(--gc-accent);
+  color: #ffffff;
+}
+html[data-gc-answers-dark="on"] .pagination > .disabled > a,
+html[data-gc-answers-dark="on"] .pagination > .disabled > span {
+  background-color: var(--gc-surface-sunken);
+  border-color: var(--gc-border);
+  color: var(--gc-text-muted);
+}
+
+/* --- Buttons and action controls ----------------------------------------- */
+/* Only neutral buttons are recoloured. Semantic action buttons
+ * (.btn-success, .btn-danger, .btn-primary, .btn-warning, .btn-info) keep the
+ * platform's colours and therefore their meaning. */
+html[data-gc-answers-dark="on"] .btn-default {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border-strong);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .btn-default:hover,
+html[data-gc-answers-dark="on"] .btn-default:focus {
+  background-color: var(--gc-hover);
+  border-color: var(--gc-border-strong);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .btn-default[disabled],
+html[data-gc-answers-dark="on"] .btn-default.disabled {
+  background-color: var(--gc-surface-sunken);
+  border-color: var(--gc-border);
+  color: var(--gc-text-muted);
+}
+html[data-gc-answers-dark="on"] .btn-link {
+  color: var(--gc-link);
+}
+
+/* --- Panels, modals, popovers, tabs -------------------------------------- */
+html[data-gc-answers-dark="on"] .panel,
+html[data-gc-answers-dark="on"] .well,
+html[data-gc-answers-dark="on"] .card {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .panel-heading,
+html[data-gc-answers-dark="on"] .panel-footer {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .modal-content {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .popover {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .nav-tabs > li > a {
+  color: var(--gc-text-muted);
+}
+html[data-gc-answers-dark="on"] .nav-tabs > li.active > a {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+
+/* --- Selection and scrollbars -------------------------------------------- */
+html[data-gc-answers-dark="on"] ::selection {
+  background-color: var(--gc-selected);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+html[data-gc-answers-dark="on"] ::-webkit-scrollbar-track {
+  background-color: var(--gc-bg);
+}
+html[data-gc-answers-dark="on"] ::-webkit-scrollbar-thumb {
+  background-color: var(--gc-surface-raised);
+  border: 3px solid var(--gc-bg);
+  border-radius: 6px;
+}
+html[data-gc-answers-dark="on"] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gc-border-strong);
+}
+
+/* =============================================================================
+ * Task 002A — refinements after the first live visual check
+ * =============================================================================
+ * These rules fix the readability problems found while viewing the first
+ * version on the real GetCourse answers page. They follow the same rules as the
+ * rest of the file: every selector is gated behind the root attribute, media and
+ * attachments are never targeted, and no filter/opacity/!important is used.
+ *
+ * The captured reference list in docs/REQUIREMENTS.md does not include some
+ * sidebar internals, so the sidebar selectors below are *defensive*: they use the
+ * class names GetCourse conventionally applies to those components. They are
+ * additive and harmless when a class is absent, but they still require
+ * confirmation on the live page.
+ *
+ * The teacher-comment block that an earlier version of this section guessed at is
+ * now handled with confirmed selectors in the Task 002C section below.
+ * ========================================================================= */
+
+/* --- Left sidebar: icon tiles and the nested training/course list --------- */
+/* Bright white icon tiles became a light "tile" surface instead of glaring
+ * white, keeping the glyph visible through the inherited text colour. */
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item-icon,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-icon,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item-image {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item-text,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item-name {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item:hover,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item:focus,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu-item:hover,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu-item:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item.active,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item.selected,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item--active,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-item--selected {
+  background-color: var(--gc-selected);
+  color: var(--gc-text);
+}
+/* Nested training/course items: keep them readable but visibly secondary. */
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-subitem,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu-item,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-list-item {
+  background-color: transparent;
+  color: var(--gc-text-muted);
+}
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-subitem.active,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-menu-subitem.selected,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu-item.active,
+html[data-gc-answers-dark="on"] .gc-account-leftbar-submenu-item.selected {
+  background-color: var(--gc-selected);
+  color: var(--gc-text);
+}
+
+/* --- Badges, counters, and small light fragments ------------------------- */
+/* Neutral badges/counters get a graphite surface; semantic label and badge
+ * variants (success/danger/warning/info/primary) keep their meaning. */
+html[data-gc-answers-dark="on"] .badge:not(.badge-success):not(.badge-danger):not(.badge-warning):not(.badge-info):not(.badge-primary),
+html[data-gc-answers-dark="on"] .label:not(.label-success):not(.label-danger):not(.label-warning):not(.label-info):not(.label-primary) {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .breadcrumb,
+html[data-gc-answers-dark="on"] .list-group-item,
+html[data-gc-answers-dark="on"] .input-group-addon,
+html[data-gc-answers-dark="on"] .nav-pills > li > a,
+html[data-gc-answers-dark="on"] .tooltip-inner {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+/* Active/selected states keep a visible indicator (mirrors the .nav-tabs rule). */
+html[data-gc-answers-dark="on"] .nav-pills > li.active > a,
+html[data-gc-answers-dark="on"] .list-group-item.active {
+  background-color: var(--gc-selected);
+  border-color: var(--gc-accent);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .breadcrumb > li + li::before {
+  color: var(--gc-text-muted);
+}
+
+/* =============================================================================
+ * Task 002B / 002D — hide the GetCourse advertising banner
+ * =============================================================================
+ * The earlier `.gc-promo-banner` selector (taken from GetCourse's documentation)
+ * did NOT match the overlay actually shown on the answers page. The real banner
+ * was confirmed in DevTools. Reduced to a safe structural sample (no personal
+ * data, no real query string):
+ *
+ *   <div class="top-notification-wrapper">
+ *     <div class="common-banner-wrapper">
+ *       <div class="common-banner">
+ *         <div class="banner-wrapper-content">
+ *           <div class="banner-content">
+ *             <h3 class="banner-title"><a href="https://sites.zerocoder.ru/ai-audit/..."></a></h3>
+ *             <p class="banner-text"><a href="https://sites.zerocoder.ru/ai-audit/..."></a></p>
+ *           </div>
+ *         </div>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * `.common-banner-wrapper` is a generic wrapper that other site banners could
+ * reuse, so it must NOT be hidden on its own. The rule below uses `:has()`
+ * (available since Chrome 105; this extension requires Chrome 120) to hide the
+ * wrapper ONLY when it actually contains the confirmed advertising link
+ * (https://sites.zerocoder.ru/ai-audit/). Unrelated banners, functional
+ * notifications, and the support/chat widget are never matched.
+ *
+ * The rule is gated by the root attribute like every other rule in this file, so
+ * the banner comes straight back as soon as the theme is switched off. Pure CSS
+ * also means a banner inserted after load is hidden too — no polling, timers, or
+ * DOM scanning. Plain `display: none`, no `!important`, no media.
+ * ========================================================================= */
+html[data-gc-answers-dark="on"] .common-banner-wrapper:has(.common-banner a[href^="https://sites.zerocoder.ru/ai-audit/"]) {
+  display: none;
+}
+
+/* =============================================================================
+ * Task 002C — confirmed teacher-comment block + reply editor
+ * =============================================================================
+ * The teacher-comment block's real markup was confirmed in DevTools. Reduced to
+ * a safe structural sample (no names, ids, or student data):
+ *
+ *   <div class="comment lesson-answer-comment user-related">
+ *     <div class="hide comment-user-settings-json"></div>
+ *     <div class="hide settings"></div>
+ *     <div class="user-image-wrapper"></div>   <- avatar (never targeted)
+ *     <div class="title"></div>                <- author / date / action links
+ *     <div class="text"></div>                 <- body
+ *   </div>
+ *
+ * The earlier Task 002A guesses (`.gc-comment`, `.teacher-comment`, bare
+ * `.comment-*`) did not match this component and have been removed. The rules
+ * below use the confirmed compound selector `.comment.lesson-answer-comment`,
+ * which cannot match an unrelated `.comment` element, and `.title`/`.text` are
+ * only styled *inside* that block. Every rule is gated by the root attribute, so
+ * the original GetCourse styling returns the moment the theme is switched off.
+ * Specificity is used instead of `!important`, which is never needed here.
+ * ========================================================================= */
+
+/* --- Container: light background -> approved graphite surface ------------ */
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+/* --- Header/title (author, date, action links) stays readable ------------ */
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .title {
+  color: var(--gc-text);
+}
+/* --- Body text, including paragraphs and lists --------------------------- */
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .text,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .text p,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .text ul,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .text ol,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment .text li {
+  color: var(--gc-text);
+}
+/* --- Links (author name, timestamps, action links) ----------------------- */
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment a {
+  color: var(--gc-link);
+}
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment a:hover,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment a:focus {
+  color: var(--gc-link-hover);
+}
+/* The avatar (`.user-image-wrapper`), the `.hide` helper blocks, and every other
+ * image are deliberately never targeted, so they keep their original markup and
+ * appearance. */
+
+/* --- Reply editor: usable width + ChatGPT-like typography ---------------- */
+/* The editor is the comment/answer textarea. It is made to span the available
+ * content width without ever overflowing it (so the page never scrolls
+ * sideways), and it gets a local system font stack (Segoe UI first on Windows)
+ * with comfortable, chat-like typography. No explicit height is set, and no font
+ * is downloaded — the stack is entirely local. Note: `max-width: 100%` also caps
+ * any manual horizontal resize, so the editor cannot be dragged wider than its
+ * container. */
+html[data-gc-answers-dark="on"] .new-comment-textarea,
+html[data-gc-answers-dark="on"] .lesson-answer-form textarea,
+html[data-gc-answers-dark="on"] .gc-comment-form textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: var(--gc-font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+  overflow-wrap: break-word;
+}
+/* Rich-text (contenteditable) editor content, if a given editor is not a plain
+ * textarea. Scoped to the two approved editor containers only and kept in sync
+ * with the textarea sizing/typography above. */
+html[data-gc-answers-dark="on"] .lesson-answer-form [contenteditable="true"],
+html[data-gc-answers-dark="on"] .gc-comment-form [contenteditable="true"] {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: var(--gc-font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+  overflow-wrap: break-word;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .new-comment-textarea::placeholder {
+  color: var(--gc-text-muted);
+}
+
+/* =============================================================================
+ * Task 002D — HW Checker panel and GetCourse left navigation
+ * =============================================================================
+ * Two remaining visual inconsistencies: HW Checker result panel (white) and the
+ * main GetCourse left navigation icon tiles (white). These selectors are
+ * confirmed from DevTools; scope is kept narrow and every rule is gated.
+ * ========================================================================= */
+
+/* --- HW Checker result panel ---------------------------------------------- */
+html[data-gc-answers-dark="on"] .hw-result {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result__head {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result__body {
+  background-color: var(--gc-surface-sunken);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result__badge {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+  border-color: var(--gc-border);
+}
+html[data-gc-answers-dark="on"] .hw-result__tools {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result__hint {
+  color: var(--gc-text-muted);
+}
+/* Status text must be readable on the dark panel. :where() removes the class
+ * weight so the tool's own *compound* state variants (e.g.
+ * `.hw-result__status.is-error`, which is more specific) still win and are not
+ * flattened. A bare single-class modifier (`.hw-result__status--error`) loses to
+ * this rule's gate and is intentionally given the readable base colour; the tool
+ * conveys state via the root `.hw-result--*` classes. */
+html[data-gc-answers-dark="on"] :where(.hw-result__status) {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result button,
+html[data-gc-answers-dark="on"] .hw-result .btn {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result button:hover,
+html[data-gc-answers-dark="on"] .hw-result button:focus,
+html[data-gc-answers-dark="on"] .hw-result .btn:hover,
+html[data-gc-answers-dark="on"] .hw-result .btn:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .hw-result button:disabled,
+html[data-gc-answers-dark="on"] .hw-result .btn:disabled {
+  background-color: var(--gc-surface);
+  color: var(--gc-text-muted);
+  border-color: var(--gc-border);
+}
+/* Preserve semantic loading/success/error indicators in badge/status/text; only
+ * structural surfaces are adjusted. */
+
+/* --- GetCourse left navigation (icon tiles) ------------------------------- */
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu {
+  background-color: transparent;
+}
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu .menu-item > a {
+  background-color: var(--gc-surface-raised);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu .menu-item > a:hover,
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu .menu-item > a:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu .menu-item.active > a,
+html[data-gc-answers-dark="on"] #gcAccountUserMenu .gc-account-leftbar .gc-account-user-menu .menu-item.selected > a {
+  background-color: var(--gc-selected);
+  color: var(--gc-text);
+}
+/* Preserve unread counters and their semantic colours; do not alter icon artwork. */
+
+/* =============================================================================
+ * Task 004 — consistent system typography + confirmed file-attachment container
+ * =============================================================================
+ * Typography: one local system sans-serif stack (`--gc-font-sans`, Segoe UI
+ * first on Windows) is applied across the interface. It is the inherited base
+ * from <body>, and the few places that commonly declare their own font — form
+ * controls and the Bootstrap/GetCourse components below — are pointed at the
+ * same stack. ONLY `font-family` is set here: never `font-size`, `font-weight`,
+ * or `line-height`, so the existing type scale and visual hierarchy are
+ * preserved exactly.
+ *
+ * Protected content is never targeted, so its fonts are untouched: icon fonts
+ * (`.fa*`, `.glyphicon`, `.material-icons`), emoji (`.emoji-text`), monospaced
+ * and syntax-highlighted code (`pre`, `code`, `kbd`, `samp`), SVG icons, and
+ * media. The `:not(...)` guards on the icon-capable targets (`button`, `input`,
+ * `.btn`, `.badge`, `.label`) keep an element that is itself an icon font from
+ * losing its glyph font.
+ *
+ * Attachment container: the confirmed `.addfield.type-file_list` component
+ * paints a light surface (~#F0F0F7). It is switched to the approved graphite
+ * surface so filenames, sizes, labels, links, and buttons stay readable. Only
+ * colours change — no width/height/margin/padding — so layout dimensions are
+ * preserved, and the uploaded images, screenshots, document previews, and
+ * thumbnails inside are never touched (no media selector exists here). This is
+ * the confirmed attachment component only; other `.addfield`/file-upload
+ * components are deliberately left alone.
+ * ========================================================================= */
+
+/* --- Typography: inherited base + components that set their own font ------ */
+html[data-gc-answers-dark="on"] button:not(.fa):not(.fas):not(.far):not(.fab):not(.glyphicon):not(.material-icons),
+html[data-gc-answers-dark="on"] input:not(.fa):not(.fas):not(.far):not(.fab):not(.glyphicon):not(.material-icons),
+html[data-gc-answers-dark="on"] optgroup,
+html[data-gc-answers-dark="on"] select,
+html[data-gc-answers-dark="on"] textarea,
+html[data-gc-answers-dark="on"] .btn:not(.fa):not(.fas):not(.far):not(.fab):not(.glyphicon):not(.material-icons),
+html[data-gc-answers-dark="on"] .form-control,
+html[data-gc-answers-dark="on"] h1,
+html[data-gc-answers-dark="on"] h2,
+html[data-gc-answers-dark="on"] h3,
+html[data-gc-answers-dark="on"] h4,
+html[data-gc-answers-dark="on"] h5,
+html[data-gc-answers-dark="on"] h6,
+html[data-gc-answers-dark="on"] .table,
+html[data-gc-answers-dark="on"] .dropdown-menu,
+html[data-gc-answers-dark="on"] .tooltip,
+html[data-gc-answers-dark="on"] .popover,
+html[data-gc-answers-dark="on"] .badge:not(.fa):not(.fas):not(.far):not(.fab):not(.glyphicon):not(.material-icons),
+html[data-gc-answers-dark="on"] .label:not(.fa):not(.fas):not(.far):not(.fab):not(.glyphicon):not(.material-icons),
+html[data-gc-answers-dark="on"] .panel,
+html[data-gc-answers-dark="on"] .nav,
+html[data-gc-answers-dark="on"] .breadcrumb,
+html[data-gc-answers-dark="on"] .pagination,
+html[data-gc-answers-dark="on"] .comment.lesson-answer-comment,
+html[data-gc-answers-dark="on"] .hw-result,
+html[data-gc-answers-dark="on"] .addfield.type-file_list {
+  font-family: var(--gc-font-sans);
+}
+
+/* --- Confirmed file-attachment container: light surface -> graphite ------- */
+html[data-gc-answers-dark="on"] .addfield.type-file_list {
+  background-color: var(--gc-surface);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+/* The inner value area must not paint its own light surface; let the container
+ * surface show through. */
+html[data-gc-answers-dark="on"] .addfield.type-file_list .value {
+  background-color: transparent;
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list label {
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list a {
+  color: var(--gc-link);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list a:hover,
+html[data-gc-answers-dark="on"] .addfield.type-file_list a:focus {
+  color: var(--gc-link-hover);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list button,
+html[data-gc-answers-dark="on"] .addfield.type-file_list .btn {
+  background-color: var(--gc-surface-raised);
+  border-color: var(--gc-border);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list button:hover,
+html[data-gc-answers-dark="on"] .addfield.type-file_list button:focus,
+html[data-gc-answers-dark="on"] .addfield.type-file_list .btn:hover,
+html[data-gc-answers-dark="on"] .addfield.type-file_list .btn:focus {
+  background-color: var(--gc-hover);
+  color: var(--gc-text);
+}
+html[data-gc-answers-dark="on"] .addfield.type-file_list button:disabled,
+html[data-gc-answers-dark="on"] .addfield.type-file_list .btn:disabled {
+  background-color: var(--gc-surface);
+  color: var(--gc-text-muted);
+  border-color: var(--gc-border);
+}
+
+/* --- Media (INTENTIONALLY NOT TARGETED) ---------------------------------- */
+/* Uploaded screenshots, attachments, icons, video, canvas, svg, and iframes are
+ * deliberately omitted from this stylesheet: no rule above matches them, so
+ * their visual contents are never altered. */
